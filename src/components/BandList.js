@@ -1,17 +1,25 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext } from 'react'
+import { SocketContext } from '../context/SocketContext'
 
-export const BandList = ( { data , vote, remove, changeName }  ) => {
+export const BandList = () => {
 
     
-    const [ bands, setBands ] = useState( data )
+    // const [ bands, setBands ] = useState( [] )
     
+    const { socket , bands , setBands } = useContext( SocketContext )
 
 
-    useEffect( () => {
-                    
-        setBands( data )
-        
-    }, [ data ])                      
+    // useEffect( () => {
+
+    //     socket.on('current-band', ( bands ) => {
+    //         setBands( bands )
+    //         })
+    
+    //     return () => socket.off('current-band')
+
+    // }, [ socket ])                      
+
+
 
     const handleName = ( evt, id ) => {
        
@@ -28,12 +36,18 @@ export const BandList = ( { data , vote, remove, changeName }  ) => {
     }
 
     const onLossesFocus = ( id, name ) => {
-        // console.log(id, name)
-        // TODO disparar el evento de socket
-        changeName( id, name )
+        socket.emit( 'change-name' , { id , name });
     }
 
+    const vote = ( id ) => {
+        console.log('votar - app');
+        socket.emit( 'votar-band', id );
+     }
+     const removeBand = ( id ) => {
 
+        console.log('remove band')
+        socket.emit( 'remove-band', id )
+      }
     
 
     const createRow = () =>  {
@@ -61,7 +75,7 @@ export const BandList = ( { data , vote, remove, changeName }  ) => {
                     <td> 
                         <button
                         className="btn btn-danger"
-                        onClick={ () => remove( band.id ) }
+                        onClick={ () => removeBand( band.id ) }
                         > Delete </button>
                      </td>
                 </tr>

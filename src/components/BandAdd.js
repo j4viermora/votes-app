@@ -1,26 +1,33 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import { SocketContext } from '../context/SocketContext'
 
-export const BandAdd = ( {addNewBand} ) => {
+export const BandAdd = () => {
+
+    const { socket } = useContext( SocketContext )
+
 
     const [ band, addBand ] = useState( '' )
-
 
     const handleForm = (evt ) => {
         
         evt.preventDefault();
-        console.log( band )
 
         if ( band.trim().length >= 2 ) {
 
             addNewBand( band )
+            addBand( '' )
 
         }else{
             alert( 'No puede enviar le formulari vacío' )
-        }
-       
-        
+        } 
     }
 
+    const addNewBand = ( name ) => {
+        console.log('new band')
+    
+        socket.emit( 'add-new-band',{ name })
+    
+      }
    
     return (
         <>
